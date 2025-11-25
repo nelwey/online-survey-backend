@@ -1,10 +1,7 @@
 import pool from '../db/connection.js';
 import type {
-  SurveyResponse,
   ResponseWithAnswers,
   SubmitResponseInput,
-  Answer,
-  AnswerWithQuestion,
 } from '../types/index.js';
 
 export class ResponseModel {
@@ -76,7 +73,7 @@ export class ResponseModel {
         const answerValues = data.answers.map((a) => [
           response.id,
           a.question_id,
-          JSON.stringify(a.answer),
+          a.answer, // Pass directly - pg library will convert to JSONB
         ]);
 
         const answerPlaceholders = answerValues
