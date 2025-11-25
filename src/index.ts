@@ -1,5 +1,6 @@
 import app from './app.js';
 import pool from './db/connection.js';
+import { runMigrations } from './db/runMigrations.js';
 
 const PORT = process.env.PORT || 3000;
 
@@ -8,6 +9,10 @@ async function startServer() {
     // Test database connection
     await pool.query('SELECT NOW()');
     console.log('✅ Database connection successful');
+
+    // Run migrations automatically on startup
+    // This is safe to run multiple times as all migrations are idempotent
+    await runMigrations();
 
     // Start server
     app.listen(PORT, () => {

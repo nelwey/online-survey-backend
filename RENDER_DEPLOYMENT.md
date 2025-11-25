@@ -87,10 +87,24 @@ CORS_ORIGIN=https://your-frontend.onrender.com
 
 ## Step 6: Deploy and Run Migrations
 
-### Option A: Run Migrations Manually (Recommended for first deployment)
+### Automatic Migrations (Recommended)
 
-1. After your service is deployed, go to the **Shell** tab in Render
-2. Run the migration commands:
+**Migrations now run automatically on server startup!** 
+
+The server will automatically run all database migrations when it starts. This is safe because:
+- All migrations are idempotent (safe to run multiple times)
+- They use `IF NOT EXISTS` and `CREATE OR REPLACE` statements
+- If migrations fail, the server will still start (with a warning)
+
+Just deploy and the migrations will run automatically. Check the logs to verify migrations completed successfully.
+
+### Manual Migration (Alternative - if needed)
+
+If you need to run migrations manually, you can access Render's Shell:
+
+1. Go to your service in Render dashboard
+2. Click on the **Shell** tab (or look for "Open Shell" button)
+3. Run the migration commands:
 
 ```bash
 npm run db:migrate
@@ -99,15 +113,7 @@ npm run db:migrate-respondent-age
 npm run db:migrate-password
 ```
 
-### Option B: Add Migration to Build Script
-
-You can modify the build command to run migrations automatically:
-
-```bash
-npm install && npm run build && npm run db:migrate && npm run db:migrate-users && npm run db:migrate-respondent-age && npm run db:migrate-password
-```
-
-**Note**: This approach runs migrations on every build, which might not be ideal for all scenarios.
+**Note**: The automatic migration system runs all these migrations on startup, so manual execution is usually not needed.
 
 ## Step 7: Verify Deployment
 
