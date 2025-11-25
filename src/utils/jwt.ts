@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 
 const { JWT_SECRET, JWT_EXPIRES_IN = '7d' } = process.env;
 
@@ -8,13 +8,14 @@ if (!JWT_SECRET) {
 
 // Type assertion: we know JWT_SECRET is defined after the check above
 const secret: string = JWT_SECRET;
+const expiresIn: string = JWT_EXPIRES_IN || '7d';
 
 export interface JwtPayload {
   userId: string;
 }
 
 export function signToken(userId: string): string {
-  return jwt.sign({ userId }, secret, { expiresIn: JWT_EXPIRES_IN });
+  return jwt.sign({ userId }, secret, { expiresIn: expiresIn as string | number } as SignOptions);
 }
 
 export function verifyToken(token: string): JwtPayload {
