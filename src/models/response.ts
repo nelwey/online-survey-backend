@@ -70,14 +70,16 @@ export class ResponseModel {
 
       // Insert answers
       if (data.answers && data.answers.length > 0) {
+        // Prepare values for batch insert with JSONB casting
         const answerValues = data.answers.map((a) => [
           response.id,
           a.question_id,
-          a.answer, // Pass directly - pg library will convert to JSONB
+          JSON.stringify(a.answer), // Stringify to ensure proper JSON format
         ]);
 
+        // Build the query with explicit JSONB casting for each answer parameter
         const answerPlaceholders = answerValues
-          .map((_, i) => `($${i * 3 + 1}, $${i * 3 + 2}, $${i * 3 + 3})`)
+          .map((_, i) => `($${i * 3 + 1}, $${i * 3 + 2}, $${i * 3 + 3}::jsonb)`)
           .join(', ');
 
         const answerParams = answerValues.flat();
