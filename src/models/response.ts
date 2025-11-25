@@ -70,24 +70,17 @@ export class ResponseModel {
 
       // Insert answers
       if (data.answers && data.answers.length > 0) {
-        // Prepare values for batch insert with JSONB casting
-        const answerValues = data.answers.map((a) => [
-          response.id,
-          a.question_id,
-          JSON.stringify(a.answer), // Stringify to ensure proper JSON format
-        ]);
-
-        // Build the query with explicit JSONB casting for each answer parameter
-        const answerPlaceholders = answerValues
-          .map((_, i) => `($${i * 3 + 1}, $${i * 3 + 2}, $${i * 3 + 3}::jsonb)`)
-          .join(', ');
-
-        const answerParams = answerValues.flat();
-
-        await client.query(`
-          INSERT INTO answers (response_id, question_id, answer)
-          VALUES ${answerPlaceholders}
-        `, answerParams);
+        // Insert answers one by one to ensure proper JSONB casting
+        // This approach is more reliable and easier to debug
+        for (const answer of data.answers) {
+          // JSON.stringify handles strings, arrays, numbers, and objects correctly
+          const jsonbValue = JSON.stringify(answer.answer);
+          
+          await client.query(
+            `INSERT INTO answers (response_id, question_id, answer) VALUES ($1, $2, $3::jsonb)`,
+            [response.id, answer.question_id, jsonbValue]
+          );
+        }
       }
 
       await client.query('COMMIT');
