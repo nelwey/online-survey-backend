@@ -6,15 +6,22 @@ if (!JWT_SECRET) {
   throw new Error('JWT_SECRET is not defined. Please set it in your environment variables.');
 }
 
+// Type assertion: we know JWT_SECRET is defined after the check above
+const secret: string = JWT_SECRET;
+
 export interface JwtPayload {
   userId: string;
 }
 
-export function signToken(userId: string) {
-  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+export function signToken(userId: string): string {
+  return jwt.sign({ userId }, secret, { expiresIn: JWT_EXPIRES_IN });
 }
 
 export function verifyToken(token: string): JwtPayload {
-  return jwt.verify(token, JWT_SECRET) as JwtPayload;
+  const decoded = jwt.verify(token, secret);
+  if (typeof decoded === 'string' || !decoded || typeof decoded !== 'object') {
+    throw new Error('Invalid token payload');
+  }
+  return decoded as JwtPayload;
 }
 
