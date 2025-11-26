@@ -31,9 +31,11 @@ app.get('/health', (req, res) => {
 app.get('/metrics', async (req, res) => {
   try {
     res.set('Content-Type', register.contentType);
-    res.end(await register.metrics());
+    const metrics = await register.metrics();
+    res.end(metrics);
   } catch (error) {
-    res.status(500).end(error);
+    console.error('Error generating metrics:', error);
+    res.status(500).end(String(error));
   }
 });
 

@@ -78,6 +78,13 @@ const userLoginTotal = new Counter({
   registers: [register],
 });
 
+// Initialize counters to 0 so they appear in metrics output even before first increment
+// This ensures they're always visible in /metrics endpoint
+surveyCreatedTotal.inc(0);
+userRegisteredTotal.inc(0);
+userLoginTotal.inc(0);
+// Note: surveyResponseTotal will appear when first response is submitted (it has labels)
+
 // Export metrics for use in other parts of the application
 export const metrics = {
   httpRequestDuration,
