@@ -4,20 +4,22 @@ global:
 
 # Forward metrics to Grafana Cloud
 remote_write:
-  - url: YOUR_GRAFANA_CLOUD_REMOTE_WRITE_URL
+  - url: ${GRAFANA_CLOUD_REMOTE_WRITE_URL}
     basic_auth:
-      username: YOUR_GRAFANA_CLOUD_USERNAME
-      password: YOUR_GRAFANA_CLOUD_PASSWORD
+      username: ${GRAFANA_CLOUD_USERNAME}
+      password: ${GRAFANA_CLOUD_PASSWORD}
 
 scrape_configs:
+  # Scrape your backend API
   - job_name: 'survey-api'
     metrics_path: '/metrics'
     static_configs:
-      - targets: ['YOUR_BACKEND_SERVICE.onrender.com']
+      - targets: ['${BACKEND_SERVICE_URL}']
         labels:
           service: 'survey-api'
           environment: 'production'
     
+  # Scrape Prometheus itself (optional)
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
