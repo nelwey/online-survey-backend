@@ -3,9 +3,8 @@ FROM prom/prometheus:latest
 # Copy template file
 COPY prometheus.yml.template /etc/prometheus/prometheus.yml.template
 
-# Copy startup script
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
+# Copy startup script with execute permissions
+COPY --chmod=755 docker-entrypoint.sh /docker-entrypoint.sh
 
 EXPOSE 9090
 
