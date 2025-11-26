@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { UserModel } from '../models/user.js';
 import { signToken } from '../utils/jwt.js';
+import { metrics } from '../middleware/metrics.js';
 
 const router = Router();
 
@@ -42,6 +43,7 @@ router.post('/register', async (req, res, next) => {
 
     const user = await UserModel.create(validatedData);
     const token = signToken(user.id);
+    metrics.userRegisteredTotal.inc();
 
     res.status(201).json({
       token,
@@ -72,6 +74,7 @@ router.post('/login', async (req, res, next) => {
     }
 
     const token = signToken(user.id);
+    metrics.userLoginTotal.inc();
 
     res.json({
       token,

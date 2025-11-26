@@ -1,0 +1,6 @@
+# Don't commit actual credentials
+prometheus.yml
+
+# But keep the example
+!prometheus.example.yml
+

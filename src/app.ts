@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import surveysRouter from './routes/surveys.js';
 import usersRouter from './routes/users.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
+import { metricsMiddleware, register } from './middleware/metrics.js';
 
 dotenv.config();
 
@@ -18,9 +19,22 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Metrics middleware (should be before routes to capture all requests)
+app.use(metricsMiddleware);
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Prometheus metrics endpoint
+app.get('/metrics', async (req, res) => {
+  try {
+    res.set('Content-Type', register.contentType);
+    res.end(await register.metrics());
+  } catch (error) {
+    res.status(500).end(error);
+  }
 });
 
 // API routes

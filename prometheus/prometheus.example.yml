@@ -1,0 +1,24 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+# Forward metrics to Grafana Cloud
+remote_write:
+  - url: YOUR_GRAFANA_CLOUD_REMOTE_WRITE_URL
+    basic_auth:
+      username: YOUR_GRAFANA_CLOUD_USERNAME
+      password: YOUR_GRAFANA_CLOUD_PASSWORD
+
+scrape_configs:
+  - job_name: 'survey-api'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['YOUR_BACKEND_SERVICE.onrender.com']
+        labels:
+          service: 'survey-api'
+          environment: 'production'
+    
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+

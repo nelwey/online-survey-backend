@@ -5,6 +5,7 @@ import { StatsModel } from '../models/stats.js';
 import { validate, createSurveySchema, submitResponseSchema } from '../middleware/validation.js';
 import { transformSurvey, transformResponse, transformStats } from '../utils/transform.js';
 import { requireAuth, AuthenticatedRequest } from '../middleware/auth.js';
+import { metrics } from '../middleware/metrics.js';
 
 const router = Router();
 
@@ -67,6 +68,7 @@ router.post('/', requireAuth, validate(createSurveySchema), async (req, res, nex
     };
 
     const survey = await SurveyModel.create(surveyData);
+    metrics.surveyCreatedTotal.inc();
     res.status(201).json(transformSurvey(survey));
   } catch (error) {
     next(error);
@@ -187,6 +189,7 @@ router.post('/responses', validate(submitResponseSchema), async (req, res, next)
     };
 
     const response = await ResponseModel.create(responseData);
+    metrics.surveyResponseTotal.inc({ survey_id: responseData.survey_id });
     res.status(201).json(transformResponse(response));
   } catch (error) {
     next(error);
