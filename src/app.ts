@@ -39,6 +39,21 @@ app.get('/metrics', async (req, res) => {
   }
 });
 
+// Debug endpoint to list all registered metrics (for verification)
+app.get('/metrics/debug', (req, res) => {
+  const metricNames = register.getMetricsAsArray().map(m => m.name);
+  res.json({
+    totalMetrics: metricNames.length,
+    metrics: metricNames.sort(),
+    businessMetrics: [
+      'surveys_created_total',
+      'survey_responses_total',
+      'users_registered_total',
+      'user_logins_total'
+    ].filter(name => metricNames.includes(name))
+  });
+});
+
 // API routes
 app.use('/api/surveys', surveysRouter);
 app.use('/api/users', usersRouter);

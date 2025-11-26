@@ -78,12 +78,9 @@ const userLoginTotal = new Counter({
   registers: [register],
 });
 
-// Initialize counters to 0 so they appear in metrics output even before first increment
-// This ensures they're always visible in /metrics endpoint
-surveyCreatedTotal.inc(0);
-userRegisteredTotal.inc(0);
-userLoginTotal.inc(0);
-// Note: surveyResponseTotal will appear when first response is submitted (it has labels)
+// Note: Counters will only appear in /metrics after they've been incremented at least once
+// This is normal Prometheus behavior - metrics appear when they have data
+// The metrics will automatically appear after the first action (survey created, user registered, etc.)
 
 // Export metrics for use in other parts of the application
 export const metrics = {
