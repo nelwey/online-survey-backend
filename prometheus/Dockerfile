@@ -1,7 +1,9 @@
 FROM prom/prometheus:latest
 
-# Install gettext for envsubst
-RUN apk add --no-cache gettext
+# Install gettext for envsubst (Prometheus uses Debian-based image, so use apt)
+USER root
+RUN apt-get update && apt-get install -y gettext-base && rm -rf /var/lib/apt/lists/*
+USER nobody
 
 # Copy template file
 COPY prometheus.yml.template /etc/prometheus/prometheus.yml.template
